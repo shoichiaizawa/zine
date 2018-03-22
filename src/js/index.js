@@ -67,7 +67,7 @@ const PageEdit = ({imagePath}) => (state, actions) => (
            top: "100px",
            height: "525px",
            right: "0px",
-           left: "380px",
+           left: "370px",
            background: "rgba(100, 100, 100, 0.9)",
            "z-index": 1
          }}/>

@@ -1,20 +1,24 @@
-# Setup
+# Zine
 
-## install packages
+## Setup
+
+### Install packages
 
 ```bash
 npm install
 ```
 
 
-## test(hot reload)
+### Test(hot reload)
 
 ```bash
 npm run start
 ```
 
 
-## build
+### Build
+
+to `dist` directory
 
 ```bash
 npm run build

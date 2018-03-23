@@ -11,4 +11,4 @@ deploy:
   bucket: "www.idea-zine.com"
   skip_cleanup: true
   acl: public-read
-  local-dir: directory-name
+  local-dir: dist

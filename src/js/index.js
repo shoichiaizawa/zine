@@ -4,7 +4,8 @@ import { Link, Route, location } from "@hyperapp/router"
 const canvas = {
   height: 525 * 1.2,
   width: 370 * 1.2 * 2,
-  color: "rgba(100, 100, 100, 1)"
+  color: "rgba(100, 100, 100, 1)",
+  edgeSize: 100
 }
 
 const Home = () => (
@@ -22,7 +23,7 @@ const Topic = ({ match }) => (
 const Edit = ({ match }) => (
   <div>
     <h2>Edit</h2>
-    <PageEdit imagePath={state.imagePath} />
+    <PageEdit src={state.src} />
   </div>
 )
 const TopicsView = ({ match }) => (
@@ -46,108 +47,113 @@ const TopicsView = ({ match }) => (
   </div>
 )
 
-const PageEdit = ({imagePath}) => (state, actions) => (
+const PageEdit = ({src}) => (state, actions) => (
   <div style={{
-         position: "relative",
-         left: "100px"
-       }}>
-    <div style={{
-           position: "absolute",
-           height: "100px",
-           left: "-110px",
-           right: "0px",
+            position: "relative"
+          }}>
+    <div Class="edge top" style={{
+           height: canvas.edgeSize + "px",
+           width: "100%",
            background: canvas.color,
-           "z-index": 1
-         }}/>
-    <div style={{
            position: "absolute",
-           top: "100px",
-           height: canvas.height + "px",
-           width: "110px",
-           left: "-110px",
-           background: canvas.color,
            "z-index": 1
-         }}/>
-    <div style={{
+         }} />
+    <div Class="edge left" style={{
+           top: canvas.edgeSize,
+           height: canvas.height,
+           width: canvas.edgeSize,
+           background: canvas.color,
            position: "absolute",
-           top: "100px",
-           height: canvas.height + "px",
-           right: "0px",
-           left: canvas.width + "px",
-           background: canvas.color,
            "z-index": 1
-         }}/>
-    <div style={{
-           position: "absolute",
-           top: 100 + canvas.height + "px",
-           height: "100px",
-           left: "-110px",
-           right: "0px",
-           background: canvas.color,
-           "z-index": 1
-         }}/>
-    <img
-      src={imagePath}
-      draggable={0}
-      onmousedown={e => {
-        actions.drag({
-          x: e.pageX,
-          y: e.pageY,
-          offset: {
-            x: e.pageX - state.left,
-            y: e.pageY - state.top
-          }
-        })
-      }}
-      ontouchstart={e => {
-        actions.drag({
-          x: e.pageX,
-          y: e.pageY,
-          offset: {
-            x: e.pageX - state.left,
-            y: e.pageY - state.top
-          }
-        })
-      }}
-      style={{
-        width: state.width + "px",
-        height: state.height + "px",
-        left: state.left + "px",
-        top: state.top + 100 + "px",
-        cursor: "move",
-        position: "absolute"
-      }}
-      />
+         }} />
+
+    <div Class="canvas" style={{
+           position: "relative",
+           width: canvas.width,
+           height: canvas.height,
+           left: canvas.edgeSize,
+           top: canvas.edgeSize
+         }}>
+      {state.images.map((image) => (
+        <img
+          src={image.src}
+          draggable={0}
+          onmousedown={e => {
+            actions.drag({
+              id: image.id,
+              offsetX: e.pageX - image.left,
+              offsetY: e.pageY - image.top
+            })
+          }}
+          style={{
+            width: image.width + "px",
+            left: image.left + "px",
+            top: image.top + "px",
+            cursor: "move",
+            position: "absolute",
+            transform: "rotate(" + image.deg + "deg)"
+          }}
+          />
+      ))}
   </div>
+
+    <div Class="edge right" style={{
+      top: canvas.edgeSize + "px",
+      height: canvas.height + "px",
+      position: "absolute",
+      left: canvas.width + canvas.edgeSize + "px",
+      right: "0px",
+      background: canvas.color,
+      "z-index": 1
+    }} />
+
+    <div Class="edge bottom" style={{
+      height: canvas.edgeSize + "px",
+      width: "100%",
+      background: canvas.color,
+      position: "relative",
+      "z-index": 1
+    }}/>
+    </div>
 )
 
 const state = {
   location: location.state,
-  imagePath: "./images/curry.jpg",
-  dragging: false,
-  offset: {
-    x: 0,
-    y: 0
-  },
-  left: 0,
-  top: 0,
-  width: 300,
-  height: null
+  images: [
+    {
+      id: 0,
+      src: "./images/curry.jpg",
+      left: 0,
+      top: 0,
+      width: 300,
+      deg: 0
+    },
+    {
+      id: 1,
+      src: "./images/curry.jpg",
+      left: 0,
+      top: 0,
+      width: 300,
+      deg: 0
+    }
+  ],
+  dragData: {id: null, offsetX: null, offsetY: null}
+}
+
+const moveData = (state, position) => {
+  if (state.dragData.id === null) return null
+  const index = state.images.findIndex(i => i.id === state.dragData.id)
+  return Object.assign(state.images[index], {
+    left: position.x - state.dragData.offsetX,
+    top: position.y - state.dragData.offsetY
+  })
 }
 
 const actions = {
   location: location.actions,
-  drop: () => ({ dragging: false }),
-  drag: (data) => Object.assign(data, { dragging: true }),
-  move: (data) => state => (
-    state.dragging && Object.assign(
-      data,
-      {
-        left: data.x - state.offset.x,
-        top: data.y - state.offset.y
-      }
-    )
-  )
+  drop: () => ({dragData: {id: null}}),
+  drag: (data) => ({dragData: data}),
+  move: (data) => state => (moveData(state, data))
 }
 
 const view = state => (

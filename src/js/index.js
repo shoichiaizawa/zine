@@ -1,6 +1,12 @@
 import { h, app } from "hyperapp"
 import { Link, Route, location } from "@hyperapp/router"
 
+const canvas = {
+  height: 525 * 1.2,
+  width: 370 * 1.2 * 2,
+  color: "rgba(100, 100, 100, 1)"
+}
+
 const Home = () => (
   <div>
     <h2>Home</h2>
@@ -50,34 +56,34 @@ const PageEdit = ({imagePath}) => (state, actions) => (
            height: "100px",
            left: "-110px",
            right: "0px",
-           background: "rgba(100, 100, 100, 0.9)",
+           background: canvas.color,
            "z-index": 1
          }}/>
     <div style={{
            position: "absolute",
            top: "100px",
-           height: "525px",
+           height: canvas.height + "px",
            width: "110px",
            left: "-110px",
-           background: "rgba(100, 100, 100, 0.9)",
+           background: canvas.color,
            "z-index": 1
          }}/>
     <div style={{
            position: "absolute",
            top: "100px",
-           height: "525px",
+           height: canvas.height + "px",
            right: "0px",
-           left: "370px",
-           background: "rgba(100, 100, 100, 0.9)",
+           left: canvas.width + "px",
+           background: canvas.color,
            "z-index": 1
          }}/>
     <div style={{
            position: "absolute",
-           top: "625px",
+           top: 100 + canvas.height + "px",
            height: "100px",
            left: "-110px",
            right: "0px",
-           background: "rgba(100, 100, 100, 0.9)",
+           background: canvas.color,
            "z-index": 1
          }}/>
     <img
@@ -87,16 +93,20 @@ const PageEdit = ({imagePath}) => (state, actions) => (
         actions.drag({
           x: e.pageX,
           y: e.pageY,
-          offsetX: e.pageX - state.left,
-          offsetY: e.pageY - state.top
+          offset: {
+            x: e.pageX - state.left,
+            y: e.pageY - state.top
+          }
         })
       }}
       ontouchstart={e => {
         actions.drag({
           x: e.pageX,
           y: e.pageY,
-          offsetX: e.pageX - state.left,
-          offsetY: e.pageY - state.top
+          offset: {
+            x: e.pageX - state.left,
+            y: e.pageY - state.top
+          }
         })
       }}
       style={{
@@ -115,12 +125,14 @@ const state = {
   location: location.state,
   imagePath: "./images/curry.jpg",
   dragging: false,
-  offsetX: 0,
-  offsetY: 0,
+  offset: {
+    x: 0,
+    y: 0
+  },
   left: 0,
   top: 0,
-  width: null,
-  height: 525
+  width: 300,
+  height: null
 }
 
 const actions = {
@@ -131,8 +143,8 @@ const actions = {
     state.dragging && Object.assign(
       data,
       {
-        left: Math.max(Math.min(data.x - state.offsetX, 0), 370 - 700),
-        top: Math.max(Math.min(data.y - state.offsetY, 0), 0)
+        left: data.x - state.offset.x,
+        top: data.y - state.offset.y
       }
     )
   )
@@ -170,7 +182,5 @@ addEventListener("mouseup", main.drop)
 addEventListener("mousemove", e => main.move({ x: e.pageX, y: e.pageY }))
 addEventListener("touchend", main.drop)
 addEventListener("touchmove", e => main.move({ x: e.pageX, y: e.pageY }))
-
-
 
 const unsubscribe = location.subscribe(main.location)

@@ -2,8 +2,8 @@ import { h, app } from "hyperapp"
 import { Link, Route, location } from "@hyperapp/router"
 
 const canvas = {
-  height: 525 * 1.2,
-  width: 370 * 1.2 * 2,
+  height: 525 * 1.4,
+  width: 370 * 1.4 * 2,
   color: "rgba(100, 100, 100, 1)",
   edgeSize: 100
 }
@@ -23,7 +23,7 @@ const Topic = ({ match }) => (
 const Edit = ({ match }) => (
   <div>
     <h2>Edit</h2>
-    <PageEdit src={state.src} />
+    <PageEdit />
   </div>
 )
 const TopicsView = ({ match }) => (
@@ -47,7 +47,7 @@ const TopicsView = ({ match }) => (
   </div>
 )
 
-const PageEdit = ({src}) => (state, actions) => (
+const PageEdit = () => (state, actions) => (
   <div style={{
             position: "relative"
           }}>
@@ -66,7 +66,6 @@ const PageEdit = ({src}) => (state, actions) => (
            position: "absolute",
            "z-index": 1
          }} />
-
     <div Class="canvas" style={{
            position: "relative",
            width: canvas.width,
@@ -74,6 +73,13 @@ const PageEdit = ({src}) => (state, actions) => (
            left: canvas.edgeSize,
            top: canvas.edgeSize
          }}>
+      <div style={{
+             position: "absolute",
+             left: canvas.width / 2,
+             height: canvas.height,
+             "border-right": "#AAA solid 1px",
+             "z-index": 1
+           }} />
       {state.images.map((image) => (
         <img
           src={image.src}
@@ -109,6 +115,7 @@ const PageEdit = ({src}) => (state, actions) => (
 
     <div Class="edge bottom" style={{
       height: canvas.edgeSize + "px",
+      top: canvas.edgeSize,
       width: "100%",
       background: canvas.color,
       position: "relative",

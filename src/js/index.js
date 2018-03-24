@@ -94,7 +94,8 @@ const Page = ({edit}) => (state, actions) => (
               actions.drag({
                 id: image.id,
                 offsetX: e.pageX - image.left,
-                offsetY: e.pageY - image.top
+                offsetY: e.pageY - image.top,
+                target: "images"
               })
             }
           }}
@@ -107,7 +108,32 @@ const Page = ({edit}) => (state, actions) => (
             transform: "rotate(" + image.deg + "deg)"
           }}
           />
-      ))}
+      ))
+      }
+  {state.texts.map((text) => (
+    <p style={{
+         "user-select": "none",
+         "font-size": text.fontSize,
+         left: text.left,
+         top: text.top,
+         cursor: edit ? "move" : "init",
+         position: "absolute",
+         transform: "rotate(" + text.deg + ")"
+       }}
+       onmousedown={e => {
+         if (edit) {
+           actions.drag({
+             id: text.id,
+             offsetX: e.pageX - text.left,
+             offsetY: e.pageY - text.top,
+             target: "texts"
+           })
+         }
+      }}
+      >
+      {text.text}
+    </p>
+  ))}
   </div>
 
     <div Class="edge right" style={{
@@ -133,6 +159,18 @@ const Page = ({edit}) => (state, actions) => (
 
 const state = {
   location: location.state,
+  pageNum: 1,
+  pageMax: 4,
+  texts: [
+    {
+      id: 0,
+      text: "焼きカレーだよ",
+      left: 0,
+      top: 0,
+      fontSize: 24,
+      deg: 0
+    }
+  ],
   images: [
     {
       id: 0,
@@ -151,13 +189,13 @@ const state = {
       deg: 0
     }
   ],
-  dragData: {id: null, offsetX: null, offsetY: null}
+  dragData: {id: null, offsetX: null, offsetY: null, target: null}
 }
 
 const moveData = (state, position) => {
   if (state.dragData.id === null) return null
-  const index = state.images.findIndex(i => i.id === state.dragData.id)
-  return Object.assign(state.images[index], {
+  const index = state[state.dragData.target].findIndex(i => i.id === state.dragData.id)
+  return Object.assign(state[state.dragData.target][index], {
     left: position.x - state.dragData.offsetX,
     top: position.y - state.dragData.offsetY
   })

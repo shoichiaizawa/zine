@@ -26,6 +26,8 @@ const Topic = ({ match }) => (
 const Edit = ({ match }) => (
   <div>
     <h2>Edit</h2>
+    <p>ドラッグ&ドロップで画像を入れられるよ</p>
+    <p>テキストはテキストボックスから入れてね</p>
     <Page edit={true} />
   </div>
 )
@@ -53,63 +55,72 @@ const Zine = () => (state, actions) => (
   <Page edit={false} />
 )
 const Page = ({edit}) => (state, actions) => (
-  <div style={{
-            position: "relative"
-          }}>
-    <div Class="edge top" style={{
-           height: canvas.edgeSize,
-           width: "100%",
-           background: canvas.color,
-           position: "absolute",
-           "z-index": 1
-         }} />
-    <div Class="edge left" style={{
-           top: canvas.edgeSize,
-           height: canvas.height,
-           width: canvas.edgeSize,
-           background: canvas.color,
-           position: "absolute",
-           "z-index": 1
-         }} />
-    <div Class="canvas" style={{
-           position: "relative",
-           width: canvas.width,
-           height: canvas.height,
-           left: canvas.edgeSize,
-           top: canvas.edgeSize
+  <main>
+    <input type="text" value={state.inputText} oninput={e => {
+        actions.setText(e.target.value)
+      }}/>
+      <input type="button" value="テキスト挿入" onmouseup={e => {
+          actions.addText()
+        }} />
+    <div style={{
+           position: "relative"
          }}>
-      <div style={{
+      <div Class="edge top" style={{
+             height: canvas.edgeSize,
+             width: "100%",
+             background: canvas.color,
              position: "absolute",
-             left: canvas.width / 2,
-             height: canvas.height,
-             "border-right": "#AAA solid 1px",
              "z-index": 1
            }} />
-      {state.images.map((image) => (
-        <img
-          src={image.src}
-          draggable={0}
-          onmousedown={e => {
-            if (edit) {
-              actions.drag({
-                id: image.id,
-                offsetX: e.pageX - image.left,
-                offsetY: e.pageY - image.top,
-                target: "images"
-              })
-            }
-          }}
-          style={{
-            width: image.width,
-            left: image.left,
-            top: image.top,
-            cursor: edit ? "move" : "init",
-            position: "absolute",
-            transform: "rotate(" + image.deg + "deg)"
-          }}
-          />
-      ))
-      }
+      <div Class="edge left" style={{
+             top: canvas.edgeSize,
+             height: canvas.height,
+             width: canvas.edgeSize,
+             background: canvas.color,
+             position: "absolute",
+             "z-index": 1
+           }} />
+      <div Class="canvas" style={{
+             position: "relative",
+             width: canvas.width,
+             height: canvas.height,
+             left: canvas.edgeSize,
+             top: canvas.edgeSize
+           }}
+           >
+        <div style={{
+               position: "absolute",
+               left: canvas.width / 2,
+               height: canvas.height,
+               "border-right": "#AAA solid 1px",
+               "z-index": 1
+             }}
+             />
+        {state.images.map((image) => (
+          <img
+            src={image.src}
+            draggable={0}
+            onmousedown={e => {
+              if (edit) {
+                actions.drag({
+                  id: image.id,
+                  offsetX: e.pageX - image.left,
+                  offsetY: e.pageY - image.top,
+                  target: "images"
+                })
+              }
+            }}
+            style={{
+              width: image.width,
+              left: image.left,
+              top: image.top,
+              cursor: edit ? "move" : "init",
+              position: "absolute",
+              transform: "rotate(" + image.deg + "deg)"
+            }}
+            />
+        ))
+        }
   {state.texts.map((text) => (
     <p style={{
          "user-select": "none",
@@ -156,34 +167,17 @@ const Page = ({edit}) => (state, actions) => (
       "z-index": 1
     }}/>
     </div>
+    </main>
 )
 
 const state = {
   location: location.state,
   pageNum: 1,
   pageMax: 4,
-  texts: [
-    {
-      id: 0,
-      text: "焼きカレーだよ",
-      left: 0,
-      top: 0,
-      fontSize: 24,
-      width: 300,
-      deg: 0
-    },
-    {
-      id: 1,
-      text: "アツアツ美味しいやきかれーだよ",
-      left: 0,
-      top: 0,
-      fontSize: 18,
-      width: 200,
-      deg: 0
-    }
-  ],
+  texts: [],
   images: [],
-  dragData: {id: null, offsetX: null, offsetY: null, target: null}
+  dragData: {id: null, offsetX: null, offsetY: null, target: null},
+  inputText: null
 }
 
 const moveData = (state, position) => {
@@ -207,6 +201,18 @@ const actions = {
       left: 0,
       top: 0,
       width: 300,
+      deg: 0
+    }
+  )}),
+  setText: (text) => state => ({inputText: text}),
+  addText: () => state => ({texts: state.texts.concat(
+    {
+      id: state.texts.length,
+      text: state.inputText,
+      left: 0,
+      top: 0,
+      width: 200,
+      fontSize: 18,
       deg: 0
     }
   )})
@@ -248,6 +254,7 @@ addEventListener("touchmove", e => main.move({ x: e.pageX, y: e.pageY }))
 addEventListener("drop", e => {
   e.preventDefault()
   var files = e.dataTransfer.files
+  console.log(e.pageX, e.pageY)
 
   for(var i=0; i<files.length; i++) {
     var file = files[i]

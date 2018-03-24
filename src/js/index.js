@@ -4,14 +4,14 @@ import { Link, Route, location } from "@hyperapp/router"
 const canvas = {
   height: 525 * 1.4,
   width: 370 * 1.4 * 2,
-  color: "rgba(100, 100, 100, 1)",
+  color: "rgba(0, 0, 0, 0.9)",
   edgeSize: 100
 }
 
 const Home = () => (
   <div>
-    <h2>Home</h2>
-    <p>homeだよ</p>
+    <h2>Homee</h2>
+    <p>IdeaZineではかんたんにZineを作ってWebで公開できるよ。ほしければ印刷もできるよ(予定)</p>
   </div>
 )
 const Read = () => (

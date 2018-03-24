@@ -56,12 +56,21 @@ const Zine = () => (state, actions) => (
 )
 const Page = ({edit}) => (state, actions) => (
   <main>
-    <input type="text" value={state.inputText} oninput={e => {
-        actions.setText(e.target.value)
-      }}/>
+    <p>ページ:{state.pageNum}/{edit ? state.pageMax : state.pages.length}</p>
+    <div style={{
+           display: edit ? "block" : "none"
+         }}>
+      <input type="text" value={state.inputText} oninput={e => {
+          actions.setText(e.target.value)
+        }} >
+      </input>
       <input type="button" value="テキスト挿入" onmouseup={e => {
           actions.addText()
-        }} />
+          actions.savePage()
+        }} >
+      </input>
+    </div>
+
     <div style={{
            position: "relative"
          }}>
@@ -79,7 +88,21 @@ const Page = ({edit}) => (state, actions) => (
              background: canvas.color,
              position: "absolute",
              "z-index": 1
-           }} />
+           }} >
+        <p style={{
+             "font-size": 36,
+             color: "#FFF",
+             width: "auto",
+             margin: 30,
+             cursor: "pointer",
+             display: state.pageNum > 1 ? "block" : "none"
+          }}
+          onclick={e => {
+            actions.loadPage(state.pageNum - 1)
+          }}>
+          ◀
+        </p>
+      </div>
       <div Class="canvas" style={{
              position: "relative",
              width: canvas.width,
@@ -117,10 +140,8 @@ const Page = ({edit}) => (state, actions) => (
               cursor: edit ? "move" : "init",
               position: "absolute",
               transform: "rotate(" + image.deg + "deg)"
-            }}
-            />
-        ))
-        }
+            }} />
+        ))}
   {state.texts.map((text) => (
     <p style={{
          "user-select": "none",
@@ -156,7 +177,21 @@ const Page = ({edit}) => (state, actions) => (
       right: 0,
       background: canvas.color,
       "z-index": 1
-    }} />
+    }}>
+    <p style={{
+      "font-size": 36,
+      color: "#FFF",
+      margin: 30,
+      cursor: "pointer",
+      display: state.pageNum < (edit ? state.pageMax : state.pages.length) ? "block" : "none"
+    }}
+  onclick={e => {
+    actions.loadPage(state.pageNum + 1)
+  }}
+    >
+    ▶
+    </p>
+    </div>
 
     <div Class="edge bottom" style={{
       height: canvas.edgeSize,
@@ -177,7 +212,13 @@ const state = {
   texts: [],
   images: [],
   dragData: {id: null, offsetX: null, offsetY: null, target: null},
-  inputText: null
+  inputText: null,
+  pages: []
+}
+
+const existPage = (state, pageNum) => {
+  const index = state.pages.findIndex(i => i.pageNum === pageNum)
+  return index >= 0
 }
 
 const moveData = (state, position) => {
@@ -187,6 +228,16 @@ const moveData = (state, position) => {
     left: position.x - state.dragData.offsetX,
     top: position.y - state.dragData.offsetY
   })
+}
+
+const getPageData = (state, pageNum) => {
+  const index = state.pages.findIndex(i => i.pageNum === pageNum)
+
+  return index >= 0 ? state.pages[index] : {
+    pageNum: pageNum,
+    images: [],
+    texts: []
+  }
 }
 
 const actions = {
@@ -215,11 +266,38 @@ const actions = {
       fontSize: 18,
       deg: 0
     }
-  )})
+  )}),
+  savePage: () => state => ({pages: getUpdatedPages(state)}),
+  loadPage: (pageNum) => state => (getPageData(state, pageNum))
+}
+
+const getUpdatedPages = (state) => {
+  const index = state.pages.findIndex(i => i.pageNum === state.pageNum)
+
+  const page = {
+    pageNum: state.pageNum,
+    images: state.images,
+    texts: state.texts
+  }
+
+  var updatedPages = state.pages
+
+  if (index < 0) {
+    updatedPages.push(page)
+  } else {
+    updatedPages[index] = page
+  }
+
+  console.log(updatedPages)
+
+  return updatedPages
 }
 
 const view = state => (
   <div>
+    <Link to="/">
+      <h1>IdeaZine</h1>
+    </Link>
     <ul>
       <li>
         <Link to="/">Home</Link>
@@ -231,8 +309,6 @@ const view = state => (
         <Link to="/edit">Edit</Link>
       </li>
     </ul>
-
-    <hr />
 
     <Route path="/" render={Edit} />
     <Route path="/read" render={Read} />
@@ -260,6 +336,7 @@ addEventListener("drop", e => {
     reader.onload = function(e) {
       var src = e.target.result
       main.addImage(src)
+      main.savePage()
     }
     reader.readAsDataURL(file)
   }

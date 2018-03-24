@@ -9,10 +9,10 @@ npm install
 ```
 
 
-### Test(hot reload)
+### Test (hot reload)
 
 ```bash
-npm run start
+npm start
 ```
 
 

@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phigasui/zine.git"
+    "url": "git+https://github.com/wakate-web-nagoya/zine.git"
   },
   "keywords": [
     "zine",
@@ -19,9 +19,9 @@
   "author": "phigasui",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/phigasui/zine/issues"
+    "url": "https://github.com/wakate-web-nagoya/zine/issues"
   },
-  "homepage": "https://github.com/phigasui/zine#readme",
+  "homepage": "https://github.com/wakate-web-nagoya/zine#readme",
   "dependencies": {
     "@hyperapp/router": "^0.4.1",
     "hyperapp": "^1.2.0",

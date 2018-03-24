@@ -14,8 +14,11 @@ const Home = () => (
     <p>homeだよ</p>
   </div>
 )
-const About = () => (
-  <h2>About</h2>
+const Read = () => (
+  <div>
+    <h2>Read</h2>
+    <Page/>
+  </div>
 )
 const Topic = ({ match }) => (
   <h2>{match.params.topicId}</h2>
@@ -23,7 +26,7 @@ const Topic = ({ match }) => (
 const Edit = ({ match }) => (
   <div>
     <h2>Edit</h2>
-    <PageEdit />
+    <Page edit={true} />
   </div>
 )
 const TopicsView = ({ match }) => (
@@ -46,13 +49,15 @@ const TopicsView = ({ match }) => (
     <Route parent path={`${match.path}/:topicId`} render={Topic} />
   </div>
 )
-
-const PageEdit = () => (state, actions) => (
+const Zine = () => (state, actions) => (
+  <Page edit={false} />
+)
+const Page = ({edit}) => (state, actions) => (
   <div style={{
             position: "relative"
           }}>
     <div Class="edge top" style={{
-           height: canvas.edgeSize + "px",
+           height: canvas.edgeSize,
            width: "100%",
            background: canvas.color,
            position: "absolute",
@@ -85,17 +90,19 @@ const PageEdit = () => (state, actions) => (
           src={image.src}
           draggable={0}
           onmousedown={e => {
-            actions.drag({
-              id: image.id,
-              offsetX: e.pageX - image.left,
-              offsetY: e.pageY - image.top
-            })
+            if (edit) {
+              actions.drag({
+                id: image.id,
+                offsetX: e.pageX - image.left,
+                offsetY: e.pageY - image.top
+              })
+            }
           }}
           style={{
-            width: image.width + "px",
-            left: image.left + "px",
-            top: image.top + "px",
-            cursor: "move",
+            width: image.width,
+            left: image.left,
+            top: image.top,
+            cursor: edit ? "move" : "init",
             position: "absolute",
             transform: "rotate(" + image.deg + "deg)"
           }}
@@ -104,17 +111,17 @@ const PageEdit = () => (state, actions) => (
   </div>
 
     <div Class="edge right" style={{
-      top: canvas.edgeSize + "px",
-      height: canvas.height + "px",
+      top: canvas.edgeSize,
+      height: canvas.height,
       position: "absolute",
-      left: canvas.width + canvas.edgeSize + "px",
-      right: "0px",
+      left: canvas.width + canvas.edgeSize,
+      right: 0,
       background: canvas.color,
       "z-index": 1
     }} />
 
     <div Class="edge bottom" style={{
-      height: canvas.edgeSize + "px",
+      height: canvas.edgeSize,
       top: canvas.edgeSize,
       width: "100%",
       background: canvas.color,
@@ -170,7 +177,7 @@ const view = state => (
         <Link to="/">Home</Link>
       </li>
       <li>
-        <Link to="/about">About</Link>
+        <Link to="/read">Read</Link>
       </li>
       <li>
         <Link to="/topics">Topics</Link>
@@ -183,7 +190,7 @@ const view = state => (
     <hr />
 
     <Route path="/" render={Home} />
-    <Route path="/about" render={About} />
+    <Route path="/read" render={Read} />
     <Route parent path="/topics" render={TopicsView} />
     <Route parent path="/" render={Edit} />
   </div>

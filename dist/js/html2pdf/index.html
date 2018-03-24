@@ -1,0 +1,64 @@
+<html>
+<head></head>
+<body>
+  
+
+<div id="element-to-print">
+  <span>I'm on page 漢字!</span>
+  <img src="curry.jpg" width="400">
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 2!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 3!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 4!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 5!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 6!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 7!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 8!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 9!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 10!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 11!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 12!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 13!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 14!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 15!</span>
+  <div class="html2pdf__page-break"></div>
+  <span>I'm on page 16!</span>
+</div>
+
+  
+
+
+<script src="es6-promise.auto.min.js"></script>
+<script src="jspdf.min.js"></script>
+<script src="html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="./html2pdf.min.js" crossorigin="anonymous"></script>
+
+
+  
+<script type="text/javascript">
+
+var element = document.getElementById('element-to-print');
+
+html2pdf(element, {
+  margin:       1,
+  filename:     'myfile.pdf',
+  image:        { type: 'jpeg', quality: 0.98 },
+  html2canvas:  { dpi: 192, letterRendering: true },
+  jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+});
+</script>
+</body>
+</html>

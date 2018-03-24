@@ -24,7 +24,8 @@
   "homepage": "https://github.com/phigasui/zine#readme",
   "dependencies": {
     "@hyperapp/router": "^0.4.1",
-    "hyperapp": "^1.2.0"
+    "hyperapp": "^1.2.0",
+    "npm": "^5.8.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

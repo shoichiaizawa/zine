@@ -116,6 +116,7 @@ const Page = ({edit}) => (state, actions) => (
          "font-size": text.fontSize,
          left: text.left,
          top: text.top,
+         width: text.width,
          cursor: edit ? "move" : "init",
          position: "absolute",
          transform: "rotate(" + text.deg + ")"
@@ -168,27 +169,20 @@ const state = {
       left: 0,
       top: 0,
       fontSize: 24,
-      deg: 0
-    }
-  ],
-  images: [
-    {
-      id: 0,
-      src: "./images/curry.jpg",
-      left: 0,
-      top: 0,
       width: 300,
       deg: 0
     },
     {
       id: 1,
-      src: "./images/curry.jpg",
+      text: "アツアツ美味しいやきかれーだよ",
       left: 0,
       top: 0,
-      width: 300,
+      fontSize: 18,
+      width: 200,
       deg: 0
     }
   ],
+  images: [],
   dragData: {id: null, offsetX: null, offsetY: null, target: null}
 }
 
@@ -205,7 +199,17 @@ const actions = {
   location: location.actions,
   drop: () => ({dragData: {id: null}}),
   drag: (data) => ({dragData: data}),
-  move: (data) => state => (moveData(state, data))
+  move: (data) => state => (moveData(state, data)),
+  addImage: (src) => state => ({images: state.images.concat(
+    {
+      id: state.images.length,
+      src: src,
+      left: 0,
+      top: 0,
+      width: 300,
+      deg: 0
+    }
+  )})
 }
 
 const view = state => (
@@ -240,5 +244,24 @@ addEventListener("mouseup", main.drop)
 addEventListener("mousemove", e => main.move({ x: e.pageX, y: e.pageY }))
 addEventListener("touchend", main.drop)
 addEventListener("touchmove", e => main.move({ x: e.pageX, y: e.pageY }))
+
+addEventListener("drop", e => {
+  e.preventDefault()
+  var files = e.dataTransfer.files
+
+  for(var i=0; i<files.length; i++) {
+    var file = files[i]
+    console.log(file)
+
+    var reader = new FileReader()
+    reader.onload = function(e) {
+      var src = e.target.result
+      main.addImage(src)
+    }
+    reader.readAsDataURL(file)
+  }
+})
+
+addEventListener("dragover", e => (e.preventDefault()))
 
 const unsubscribe = location.subscribe(main.location)

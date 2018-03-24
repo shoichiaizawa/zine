@@ -228,19 +228,15 @@ const view = state => (
         <Link to="/read">Read</Link>
       </li>
       <li>
-        <Link to="/topics">Topics</Link>
-      </li>
-      <li>
         <Link to="/edit">Edit</Link>
       </li>
     </ul>
 
     <hr />
 
-    <Route path="/" render={Home} />
+    <Route path="/" render={Edit} />
     <Route path="/read" render={Read} />
-    <Route parent path="/topics" render={TopicsView} />
-    <Route parent path="/" render={Edit} />
+    <Route path="/edit" render={Edit} />
   </div>
 )
 
